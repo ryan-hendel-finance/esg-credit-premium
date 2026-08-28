@@ -12,6 +12,22 @@ The objective is therefore to compare the two markets: does carbon appear to be 
 
 If the carbon effect is close to zero on one of the two markets, that would suggest that carbon risk is not being priced in the same way across asset classes.
 
+## Why the two markets should not agree
+
+This is the part of the project I find most interesting, and it is the reason for looking at both markets rather than one.
+
+Equity and debt are two claims on the same company, but they are not exposed to the same part of the distribution of outcomes.
+
+An equity holder owns the residual claim. Their payoff depends on the full range of outcomes, including the upside. A company with high emissions today may be spending heavily on transition, and that spending can eventually create value. Carbon intensity is therefore ambiguous for an equity investor: it can be a cost, a risk, or an opportunity, depending on what the company does with it.
+
+A bondholder owns a fixed claim. Their upside is capped at par. What matters to them is the probability that the company is still able to repay, and the value of the collateral if it is not. Transition risk enters their analysis in one direction only: as a downside.
+
+This asymmetry has a direct consequence. Carbon risk should show up more clearly, and more consistently, in credit spreads than in equity valuations. And it should be concentrated on long maturities, because a bond maturing in two years is repaid long before most transition scenarios materialise.
+
+Comparing the two markets therefore becomes a test of consistency across the capital structure of the same companies. If credit prices carbon and equity does not, the two markets disagree on the timing or the severity of transition risk. That disagreement is itself the result.
+
+The comparison also has a practical limitation worth stating: the two effects are not measured in the same units. A basis point of credit spread and a turn of EV/EBITDA cannot be placed on the same scale. To compare them, I use standardised coefficients, which express the effect of a one standard deviation change in carbon intensity in standard deviations of the dependent variable.
+
 ## Why I built this
 
 I spent a year in the ALM and investment risk team of a French institutional investor, working on a EUR 2.5 billion portfolio.
@@ -39,6 +55,8 @@ For equities, I look at two measures:
 
 The equity regressions control for company size, beta and sector fixed effects. Leverage is also included in the valuation regression.
 
+The two equity measures do not answer the same question, and I keep them separate for that reason. The three-year return tells us what has already happened: if carbon-intensive companies underperformed, the market repriced them during the window. The valuation multiple is closer to a forward-looking measure: it tells us what investors are willing to pay today for a given level of earnings, and therefore what risk premium they currently require.
+
 For bonds, I use four specifications:
 
 1. **Naive**: spread on carbon intensity only. This is mainly there as a baseline and a counterexample.
@@ -60,6 +78,7 @@ Carbon intensity is log-transformed because the distribution is highly skewed. A
 
 ```text
 carbone_stoxx.py           main pipeline, runs the analysis end to end
+scraper.py                 collects equity data, ECB curve and available ESG scores
 data/                      data files and templates
 output/                    charts and regression results
 ```
@@ -69,7 +88,8 @@ output/                    charts and regression results
 ```bash
 pip install -r requirements.txt
 
-python carbone_stoxx.py
+python scraper.py          # collects what is automatable
+python carbone_stoxx.py    # runs the analysis
 ```
 
 The current version includes a simulated sample so that the full pipeline can be tested without external market data.
@@ -110,6 +130,7 @@ Fifty well-matched bonds are more useful than a thousand poorly matched ones.
 
 * One observation date for the bond analysis: the credit analysis is a cross-section, not a time-series analysis.
 * The equity return analysis covers a three-year period, but this does not establish a causal relationship between carbon intensity and performance.
+* The two markets are not observed on the same perimeter. Every listed company has equity, but only part of the sample has listed debt, and the companies that issue bonds tend to be larger and better rated. The comparison is therefore made on the subset of companies present in both markets.
 * Liquidity is not controlled for on the bond side. Less liquid bonds can trade at wider spreads for reasons unrelated to climate risk.
 * Issuers with both green and conventional bonds would allow a cleaner comparison using same-issuer pairs. This is the natural next step.
 * Sector fixed effects remove part of the carbon signal because carbon intensity is strongly related to the sector. The estimated effect is therefore likely to be conservative.
@@ -122,6 +143,4 @@ Fifty well-matched bonds are more useful than a thousand poorly matched ones.
 
 The last panel is the key one: residual credit spread after controlling for rating, leverage, maturity and sector, plotted against carbon intensity and split between short and long maturities.
 
-Thanks for reading.
-
-**Ryan Hendel**
+**Ryan Hendel** — [linkedin.com/in/ryan-hendel](https://www.linkedin.com/in/ryan-hendel/)
